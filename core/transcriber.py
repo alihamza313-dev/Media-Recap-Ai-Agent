@@ -1,45 +1,22 @@
-import whisper
-import os
+from core.Whisper_transcriber import transcribe_all
+from core.Assembly_AI import transcribe
 
-WHISPER_MODEL = os.getenv("WHISPER_MODEL","small")
-#Get WHISPER_MODEL from environment, otherwise use "small"
+from utils.audio_processor import process_audio
+from utils.aai_audio_processing import prepare_audio
 
-_model = None
-
-def load_model():
-    global _model
-    if _model is None:
-        print("Loading Model ...")
-        _model = whisper.load_model(WHISPER_MODEL)
-        print("Whisper Model loaded successfully.")
-
-    return _model
+ENGLISH_LANGUAGES = {"english", "en"}
 
 
-def transcribe(chunk_path : str , task : str , language : str|None = None):
-    model = load_model()
+def get_transcript(source: str, language: str) -> str:
+    """
+    Generate a transcript using the appropriate transcription provider.
+    """
 
-    result = model.transcribe(chunk_path , task = task , language = language)
-    return result['text']
+    language = language.lower().strip()
 
+    if language in ENGLISH_LANGUAGES:
+        chunks = process_audio(source)
+        return transcribe_all(chunks)
 
-def transcribe_all(chunks : list , translate : bool = False):
-    full_transcript = []
-
-    kwargs = {
-    "task" : "translate" if translate else "transcribe"
-    }
-    if translate:
-        kwargs["language"] = "hi"
-
-    for i , chunk_path in enumerate(chunks):
-        print(f"Transcribing chunk_{i+1}...")
-
-        text = transcribe(chunk_path,**kwargs)
-
-        print(f"Transcription for chunk_{i+1} is done.")
-        
-        full_transcript.append(text)
-
-    print("Transcription Completed.")
-    return " ".join(full_transcript)
+    audio_path = prepare_audio(source)
+    return transcribe(audio_path, language=language)

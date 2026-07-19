@@ -61,7 +61,6 @@ def rag_pipeline(transcript : str = None , collection_name : str = None , store 
 
 
 def ask_question(rag_chain , question : str)->str:
-    print("-"*50)
-    print(f"questions : {question}")
+    print("="*50)
     response = rag_chain.invoke(question)
     return response

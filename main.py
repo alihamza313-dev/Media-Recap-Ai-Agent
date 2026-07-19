@@ -1,23 +1,26 @@
-from core.transcriber import transcribe_all
-from utils.audio_processor import process_audio
+from core.transcriber import get_transcript
 from Rag.rag_engine import rag_pipeline, ask_question
 from services.summarizer import create_summary
-from services.extractor import extract_action_items,extract_key_decisions,extract_questions
+from services.extractor import (
+    extract_action_items,
+    extract_key_decisions,
+    extract_questions,
+)
+import sys
 
 def print_section(title, content):
     print("-"*50)
     print(f"{title}:\n{content}")
 
-source = "https://www.youtube.com/watch?v=5sLYAQS9sWQ"
+SOURCE = "https://www.youtube.com/watch?v=wioAFuHzcao"
+LANGUAGE = "hi"
 
 try:
-    audio_chunks = process_audio(source)
-
-    transcript = transcribe_all(audio_chunks)
+    transcript = get_transcript(SOURCE, LANGUAGE)
 
 except Exception as e:
     print(f"Processing failed: {e}")
-    exit()
+    sys.exit(1)
 
 
 try:
@@ -33,7 +36,7 @@ try:
     questions = extract_questions(transcript)
 except Exception as e:
     print(f"RAG processing failed: {e}")
-    exit()
+    sys.exit(1)
 
 print_section("Title", title)
 print_section("Summary", summary)
