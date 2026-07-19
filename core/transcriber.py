@@ -16,26 +16,30 @@ def load_model():
     return _model
 
 
-def transcribe(chunk_path : str , task : str):
+def transcribe(chunk_path : str , task : str , language : str|None = None):
     model = load_model()
 
-    result = model.transcribe(chunk_path , task = task)
+    result = model.transcribe(chunk_path , task = task , language = language)
     return result['text']
 
 
 def transcribe_all(chunks : list , translate : bool = False):
-    full_transcript = ""
+    full_transcript = []
 
-    task = "translate" if translate else "transcribe"
+    kwargs = {
+    "task" : "translate" if translate else "transcribe"
+    }
+    if translate:
+        kwargs["language"] = "hi"
 
     for i , chunk_path in enumerate(chunks):
         print(f"Transcribing chunk_{i+1}...")
 
-        text = transcribe(chunk_path,task)
+        text = transcribe(chunk_path,**kwargs)
 
-        print("Transcription for chunk_{i+1} is done.")
+        print(f"Transcription for chunk_{i+1} is done.")
         
-        full_transcript+= text + " "
+        full_transcript.append(text)
 
     print("Transcription Completed.")
-    return full_transcript
+    return " ".join(full_transcript)
