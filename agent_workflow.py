@@ -16,7 +16,7 @@ def print_section(title, content):
 def analyze_media():
 
     source = input("\nEnter YouTube URL or local file path: ").strip()
-    language = input("Enter language (en, hi, ur, ...): ").strip()
+    language = input("Enter language (en / hi): ").strip()
 
     try:
         transcript = get_transcript(source, language)

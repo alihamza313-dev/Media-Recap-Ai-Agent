@@ -25,3 +25,7 @@ def get_transcript(source: str, language: str) -> str:
         audio_path = prepare_audio(source)
         return transcribe(audio_path, language=language)
     
+    else:
+        print("No language detected!! ('Language options : en/hi')")
+        return
+    
