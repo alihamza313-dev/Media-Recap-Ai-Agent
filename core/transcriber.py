@@ -5,6 +5,7 @@ from utils.audio_processor import process_audio
 from utils.aai_audio_processing import prepare_audio
 
 ENGLISH_LANGUAGES = {"english", "en"}
+HINDI_LANGUAGES = {"hindi" , "hi"}
 
 
 def get_transcript(source: str, language: str) -> str:
@@ -15,8 +16,12 @@ def get_transcript(source: str, language: str) -> str:
     language = language.lower().strip()
 
     if language in ENGLISH_LANGUAGES:
+        #these two functions are are related to the whisper if language is detected as english then call whisper 
         chunks = process_audio(source)
         return transcribe_all(chunks)
-
-    audio_path = prepare_audio(source)
-    return transcribe(audio_path, language=language)
+    
+    elif language in HINDI_LANGUAGES:
+        #these two functions are related to the Assembly ai if language other than english
+        audio_path = prepare_audio(source)
+        return transcribe(audio_path, language=language)
+    

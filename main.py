@@ -1,67 +1,40 @@
-from core.transcriber import get_transcript
-from Rag.rag_engine import rag_pipeline, ask_question
-from services.summarizer import create_summary
-from services.extractor import (
-    extract_action_items,
-    extract_key_decisions,
-    extract_questions,
-)
+from Rag.vector_store_collections import list_collections,delete_collection
 import sys
+from agent_workflow import analyze_media
 
-def print_section(title, content):
-    print("-"*50)
-    print(f"{title}:\n{content}")
+def show_menu():
 
-SOURCE = "https://www.youtube.com/watch?v=wioAFuHzcao"
-LANGUAGE = "hi"
+    while True:
 
-try:
-    transcript = get_transcript(SOURCE, LANGUAGE)
+        print("\n================================ Media Recap AI ================================")
+        print("1. Analyze Media")
+        print("2. View Collections")
+        print("3. Delete Collection")
+        print("4. Exit")
 
-except Exception as e:
-    print(f"Processing failed: {e}")
-    sys.exit(1)
+        choice = input("\nChoose an option: ").strip()
 
+        if choice == "1":
+            analyze_media()
 
-try:
-    rag_chain, collection_name , title = rag_pipeline(
-        transcript=transcript
-    )
+        elif choice == "2":
+            list_collections()
 
-    print(f"Stored collection: {collection_name}")
+        elif choice == "3":
 
-    summary = create_summary(transcript)
-    key_actions = extract_action_items(transcript)
-    key_decisions = extract_key_decisions(transcript)
-    questions = extract_questions(transcript)
-except Exception as e:
-    print(f"RAG processing failed: {e}")
-    sys.exit(1)
+            collection = input(
+                "Enter collection name to delete: "
+            ).strip()
 
-print_section("Title", title)
-print_section("Summary", summary)
-print_section("Key Actions", key_actions)
-print_section("Decision Points", key_decisions)
-print_section("Questions", questions)
+            delete_collection(collection)
+
+        elif choice == "4":
+            print("Goodbye!")
+            sys.exit(0)
+
+        else:
+            print("Invalid option.")
 
 
-
-print("\n💬 Chat with your meeting (type 'exit' to quit)\n")
-
-while True:
-    question = input("You: ").strip()
-
-    if question.lower() in ["exit", "quit"]:
-        print("👋 Goodbye!")
-        break
-
-    if not question:
-        continue
-
-    answer = ask_question(
-        rag_chain,
-        question
-    )
-
-    print(f"\n🤖 Assistant: {answer}\n")
-    print("-"*50)
+if __name__ == "__main__":
+    show_menu()

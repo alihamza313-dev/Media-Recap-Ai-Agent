@@ -54,15 +54,34 @@ def save_collection(title:str ,collection_name: str):
         json.dump(collections, f, indent=4)
 
 
-def get_all_collections():
+def list_collections():
     if not os.path.exists(COLLECTION_FILE):
         return []
 
     with open(COLLECTION_FILE, "r") as f:
-        return json.load(f)
+        collections =  json.load(f)
     
+    for i , c in enumerate(collections):
+        print(f"{i} : \n Title : {c['title']} \n Collection_name : {c['collection_name']}")
+
 
 def delete_collection(collection_name):
+    if not os.path.exists(COLLECTION_FILE):
+        print("No Collection file found")
+        return
+    with open(COLLECTION_FILE, "r") as f:
+        collections = json.load(f)
+
+    not_found = True
+    for c in collections:
+        if c["collection_name"] == collection_name:
+            not_found = False
+            break
+
+    if not_found:
+        print("No Collection exist of this name")
+        return
+    
     vector_store = Chroma(
         collection_name=collection_name,
         persist_directory="Vector_db"

@@ -1,10 +1,17 @@
-from utils.aai_audio_processing import prepare_audio
-from core.Assembly_AI import transcribe
+import json
+import os
+COLLECTION_FILE = "collections.json"
 
-url = "https://www.youtube.com/watch?v=wioAFuHzcao"
+def list_collections():
+    if not os.path.exists(COLLECTION_FILE):
+        return []
 
-audio_path = prepare_audio(url)
+    with open(COLLECTION_FILE, "r") as f:
+        collections =  json.load(f)
+    
+    for i , c in enumerate(collections):
+        print(f"{i} : \n Title : {c['title']} \n Collection_name : {c['collection_name']}")
 
-transcript = transcribe(audio_path)
 
-print(transcript)
+if __name__ == "__main__":
+    list_collections()
