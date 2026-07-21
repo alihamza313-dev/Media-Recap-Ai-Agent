@@ -33,7 +33,7 @@ def create_collection_name(title: str):
     return f"{safe_title}_{uuid.uuid4().hex[:8]}"
 
 
-def save_collection(title:str ,collection_name: str):
+def save_collection(title:str ,collection_name: str , source : str):
     collections = []
 
     # Load existing collections
@@ -46,6 +46,7 @@ def save_collection(title:str ,collection_name: str):
         {
             'title' : title,
             "collection_name" : collection_name,
+            "source" : source
         }
         )
 
@@ -82,13 +83,20 @@ def delete_collection(collection_name):
         print("No Collection exist of this name")
         return
     
+    #Now we have to get the exact collection coressponding to the collection_name so for this we creating a Chroma object that points to an existing collection
     vector_store = Chroma(
         collection_name=collection_name,
         persist_directory="Vector_db"
     )
 
     vector_store.delete_collection()
-    remove_Collection_name(collection_name)
+    
+    #This calls Chroma's delete_collection() method.
+    # It deletes the entire collection:
+    # all embeddings
+    # all stored documents
+    # all metadata associated with that collection
+    #     remove_Collection_name(collection_name)
 
 
 def remove_Collection_name(collection_name):

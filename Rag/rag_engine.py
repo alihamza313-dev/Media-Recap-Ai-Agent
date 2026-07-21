@@ -9,17 +9,16 @@ from langchain_core.prompts import ChatPromptTemplate
 def format_docs(docs : list)->str:
     return "\n\n".join(doc.page_content for doc in docs)
 
-def rag_pipeline(transcript : str = None , collection_name : str = None , store : bool = False):
-    if store and not collection_name:
-        raise ValueError(
-            "collection_name is required when loading an existing collection"
-        )
-
-    if store:
-        vector_store = get_vectorStore(collection_name)
+def rag_pipeline(transcript : str = None ,source : str = None , existing_collection : dict = None):
+    collection_name = ""
+    title = ""
+    if existing_collection:
+        vector_store = get_vectorStore(existing_collection["collection_name"])
+        title = existing_collection["title"]
+        collection_name = existing_collection["collection_name"]
 
     else:
-        vector_store, collection_name, title = build_vectorStore(transcript)
+        vector_store, collection_name, title = build_vectorStore(transcript , source)
 
     #this is beacuse at the very time when we loaded the transcript we use to build vector store beacuse we have to create mbeddings of this transcipt and then store it into the vector store and then after all when ever i have to perform functions like suppose i want to retrieve documents from the vector store based on some query then we do not build vector store we simply get it and then use its function vector_store.as_retriever and simply get documents.
 
@@ -60,7 +59,8 @@ def rag_pipeline(transcript : str = None , collection_name : str = None , store 
     return final_chain,collection_name,title
 
 
+
 def ask_question(rag_chain , question : str)->str:
-    print("="*50)
+    print("-"*50)
     response = rag_chain.invoke(question)
     return response

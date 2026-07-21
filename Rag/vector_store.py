@@ -15,13 +15,10 @@ def get_embeddings():
     return embeddings
 
 
-def build_vectorStore(transcript : str)->tuple[Chroma, str]:
+def build_vectorStore(transcript : str , source : str)->tuple[Chroma, str]:
     chunks = split_text(transcript)
 
     docs = [Document(page_content=chunk , metadata = {'chunk_id' : i}) for i , chunk in enumerate(chunks)]
-
-    if not can_create_collection():
-        raise Exception("Maximum 5 meetings stored. Delete an existing collection first.")
     
     title = create_title(transcript)
     collection_name = create_collection_name(title)
@@ -32,7 +29,7 @@ def build_vectorStore(transcript : str)->tuple[Chroma, str]:
         collection_name= collection_name,
         persist_directory=CHROMA_DIR,
     )
-    save_collection(title , collection_name)
+    save_collection(title , collection_name , source)
 
     return vector_store, collection_name,title
 

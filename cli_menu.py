@@ -18,10 +18,11 @@ def show_menu():
             analyze_media()
 
         elif choice == "2":
+            print('-'*50)
             list_collections()
 
         elif choice == "3":
-
+            print('-'*50)
             collection = input(
                 "Enter collection name to delete: "
             ).strip()
@@ -29,6 +30,7 @@ def show_menu():
             delete_collection(collection)
 
         elif choice == "4":
+            print('-'*50)
             print("Goodbye!")
             sys.exit(0)
 
