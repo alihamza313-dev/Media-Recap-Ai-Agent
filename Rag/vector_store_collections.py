@@ -63,7 +63,7 @@ def list_collections():
         collections =  json.load(f)
     
     for i , c in enumerate(collections):
-        print(f"{i} : \n Title : {c['title']} \n Collection_name : {c['collection_name']}")
+        print(f"{i} : \n Title : {c['title']} \n Collection_name : {c['collection_name']} \n Source Link : {c['source']}")
 
 
 def delete_collection(collection_name):
